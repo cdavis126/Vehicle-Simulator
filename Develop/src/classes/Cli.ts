@@ -41,25 +41,6 @@ class Cli {
       });
   }
 
-  chooseVehicle(): void {
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "selectedVehicleVin",
-          message: "Select a vehicle to perform an action on",
-          choices: this.vehicles.map((vehicle) => ({
-            name: `${vehicle.vin} -- ${vehicle.make} ${vehicle.model}`,
-            value: vehicle.vin,
-          })),
-        },
-      ])
-      .then((answers) => {
-        this.selectedVehicleVin = answers.selectedVehicleVin;
-        this.performActions();
-      });
-  }
-
   createVehicle(): void {
     inquirer
       .prompt([
@@ -78,6 +59,27 @@ class Cli {
         } else if (answers.vehicleType === "Motorbike") {
           this.createMotorbike();
         }
+      });
+  }
+
+  chooseVehicle(): void {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selectedVehicleVin",
+          message: "Select a vehicle to perform an action on",
+          choices: this.vehicles.map((vehicle) => {
+            return {
+              name: `${vehicle.vin} -- ${vehicle.make} ${vehicle.model}`,
+              value: vehicle.vin,
+            };
+          }),
+        },
+      ])
+      .then((answers) => {
+        this.selectedVehicleVin = answers.selectedVehicleVin;
+        this.performActions();
       });
   }
 
@@ -108,57 +110,64 @@ class Cli {
       });
   }
 
-  performActions(): void {
+  createTruck(): void {
     inquirer
       .prompt([
-        {
-          type: "list",
-          name: "action",
-          message: "Select an action",
-          choices: [
-            "Print details",
-            "Start vehicle",
-            "Accelerate 5 MPH",
-            "Decelerate 5 MPH",
-            "Stop vehicle",
-            "Turn right",
-            "Turn left",
-            "Reverse",
-            "Select or create another vehicle",
-            "Exit",
-          ],
-        },
+        { type: "input", name: "color", message: "Enter Color" },
+        { type: "input", name: "make", message: "Enter Make" },
+        { type: "input", name: "model", message: "Enter Model" },
+        { type: "input", name: "year", message: "Enter Year" },
+        { type: "input", name: "weight", message: "Enter Weight" },
+        { type: "input", name: "topSpeed", message: "Enter Top Speed" },
+        { type: "input", name: "towingCapacity", message: "Enter Towing Capacity" },
       ])
       .then((answers) => {
-        const selectedVehicle = this.vehicles.find((v) => v.vin === this.selectedVehicleVin);
-        if (!selectedVehicle) return;
-
-        if (answers.action === "Print details") {
-          selectedVehicle.printDetails();
-        } else if (answers.action === "Start vehicle") {
-          selectedVehicle.start();
-        } else if (answers.action === "Accelerate 5 MPH") {
-          selectedVehicle.accelerate(5);
-        } else if (answers.action === "Decelerate 5 MPH") {
-          selectedVehicle.decelerate(5);
-        } else if (answers.action === "Stop vehicle") {
-          selectedVehicle.stop();
-        } else if (answers.action === "Turn right") {
-          selectedVehicle.turn("right");
-        } else if (answers.action === "Turn left") {
-          selectedVehicle.turn("left");
-        } else if (answers.action === "Reverse") {
-          selectedVehicle.reverse();
-        } else if (answers.action === "Select or create another vehicle") {
-          this.startCli();
-        } else {
-          this.exit = true;
-        }
-
-        if (!this.exit) {
-          this.performActions();
-        }
+        const truck = new Truck(
+  Cli.generateVin(),
+  answers.color,
+  answers.make,
+  answers.model,
+  parseInt(answers.year),
+  parseInt(answers.weight),
+  parseInt(answers.topSpeed),
+  parseInt(answers.towingCapacity), // ✅ Moved before wheels
+  [new Wheel(), new Wheel(), new Wheel(), new Wheel()] // ✅ Wheels placed last
+);
+        this.vehicles.push(truck);
+        this.selectedVehicleVin = truck.vin;
+        this.performActions();
       });
+  }
+
+  createMotorbike(): void {
+    inquirer
+      .prompt([
+        { type: "input", name: "color", message: "Enter Color" },
+        { type: "input", name: "make", message: "Enter Make" },
+        { type: "input", name: "model", message: "Enter Model" },
+        { type: "input", name: "year", message: "Enter Year" },
+        { type: "input", name: "weight", message: "Enter Weight" },
+        { type: "input", name: "topSpeed", message: "Enter Top Speed" },
+      ])
+      .then((answers) => {
+        const motorbike = new Motorbike(
+          Cli.generateVin(),
+          answers.color,
+          answers.make,
+          answers.model,
+          parseInt(answers.year),
+          parseInt(answers.weight),
+          parseInt(answers.topSpeed),
+          [new Wheel(), new Wheel()]
+        );
+        this.vehicles.push(motorbike);
+        this.selectedVehicleVin = motorbike.vin;
+        this.performActions();
+      });
+  }
+
+  performActions(): void {
+    console.log("Performing actions on vehicle...");
   }
 }
 
