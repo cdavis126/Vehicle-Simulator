@@ -67,7 +67,7 @@ class Truck extends Vehicle implements AbleToTow {
     console.log(`Color: ${this.color}`);
     console.log(`Towing Capacity: ${this.towingCapacity} lbs`);
 
-    // Fix incorrect method calls for wheel details
+    //Fix incorrect method calls for wheel details
     this.wheels.forEach((wheel, index) => {
       console.log(`Wheel ${index + 1}: ${wheel.getDiameter} inches, Brand: ${wheel.getTireBrand}`);
     });
