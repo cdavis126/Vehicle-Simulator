@@ -61,11 +61,11 @@ import Wheel from './Wheel.js';
     console.log(`Color: ${this.color}`);
 
     this.wheels.forEach((wheel, index) => {
-      console.log(`Wheel ${index + 1}: ${wheel.getDiameter()} inches, Brand: ${wheel.getTireBrand()}`);
+      console.log(`Wheel ${index + 1}: ${wheel.getDiameter} inches, Brand: ${wheel.getTireBrand}`);
     });
   }
 }
-}
+
 
 // Export the Motorbike class as the default export
 export default Motorbike;
